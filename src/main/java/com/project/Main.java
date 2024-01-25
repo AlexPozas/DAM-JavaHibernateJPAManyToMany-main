@@ -19,7 +19,7 @@ public class Main {
          }
       }
 
-      Manager.createSessionFactory();
+Manager.createSessionFactory();
 
 
 // Afegir llibres
@@ -45,7 +45,7 @@ Llibre lib12 = Manager.addLlibre("LL02B2", "Editorial 2");
 Llibre lib13 = Manager.addLlibre("LL03B2", "Editorial 3");
 Llibre lib14 = Manager.addLlibre("LL04B2", "Editorial 4");
 
-
+System.err.println("Afegir llibres");
 // Afegir biblioteques
 
 
@@ -81,6 +81,7 @@ llibresBib2.add(lib14);
 Manager.updateBiblioteca(bib2.getBibliotecaId(), 
     bib2.getNom(), bib2.getCiutat(), llibresBib2);
 
+System.err.println("Afegir Biblioteca");
 
 // Afegir persones
 
@@ -151,7 +152,7 @@ Manager.updatePersona(per7.getPersonaId(),
 Manager.addPersona("000008I", "Persona 8", "+34 000 00 00 08");
 Manager.addPersona("000009J", "Persona 9", "+34 000 00 00 09");
 
-
+System.err.println("Afegir Persona");
 // Afegir autors
 
 
@@ -194,14 +195,13 @@ llibresAut4.add(lib09);
 llibresAut4.add(lib14);
 Manager.updateAutor(aut4.getAutorId(), aut4.getNom(), llibresAut4);
 
-
+System.err.println("Afegir Autor");
 // LListar dades
 
 
 @SuppressWarnings("unchecked")
 Collection<Llibre> colLlibres = (Collection<Llibre>) Manager.listCollection(Llibre.class, "");
 System.out.println(Manager.collectionToString(Llibre.class, colLlibres));
-
 
 
 

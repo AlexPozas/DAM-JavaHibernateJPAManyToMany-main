@@ -8,27 +8,27 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(name = "Bibiloteca", 
+@Table(name = "Bblioteca", uniqueConstraints = {@UniqueConstraint(columnNames = "bibliotecaId")})
+public class Biblioteca {
+    
+    @Id
+    @Column(name = "bibliotecaId", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long bibliotecaId;
 
-	uniqueConstraints = {@UniqueConstraint(columnNames = "bibliotecaId")})
-public class Biblioteca implements Serializable {
+    @Column(name = "nom")
 
-	@Id
-	@Column(name = "bibliotecaId", unique = true, nullable = false)
-	@GeneratedValue(strategy=GenerationType.IDENTITY) // L'id es genera automàticament
-	private long bibliotecaId;
+    private String nom;
 
-	@Column(name = "nom")
-	private String nom;
+    @Column(name = "ciutat")
+    private String ciutat; 
 
-	@Column(name = "ciutat")
-	private String ciutat;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "Llibres_Biblioteca",
+        joinColumns = {@JoinColumn(referencedColumnName = "bibliotecaId")}, 
+        inverseJoinColumns = {@JoinColumn(referencedColumnName = "llibreid")})
+    private Set<Llibre> biblioteques;
 
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinTable(name = "Bibiloteca_Llibre", 
-		joinColumns = {@JoinColumn(referencedColumnName = "bibliotecaId")}, 
-		inverseJoinColumns = {@JoinColumn(referencedColumnName = "llibreId")})
-	private Set<Llibre> llibres; // Ha de tenir getter i setter perquè s'encarrega de la taula relacional N:N
 
 	public Biblioteca( String nom, String ciutat) {
 		
@@ -62,33 +62,32 @@ public class Biblioteca implements Serializable {
 	}
 
 	public Set<Llibre> getLlibres() {
-		return llibres;
+		return biblioteques;
 	}
 
 	public void setLlibres(Set<Llibre> llibres) {
-		this.llibres = llibres;
+		this.biblioteques = llibres;
+	}
+
+
+	
+
+	
+
+
+
+
+
+	public List<Object[]> queryBiblioteca () {
+		long id = this.getBibliotecaId();
+		return Manager.queryTable("SELECT DISTINCT e.* FROM Llibres_Biblioteca ec, Llibre e WHERE e.id = ec.llibreid AND ec.bibliotecaId = " + id);
 	}
 
 	@Override
-	public String toString() {
-		return "Biblioteca [bibliotecaId=" + bibliotecaId + ", nom=" + nom + ", ciutat=" + ciutat + ", llibres="
-				+ llibres + "]";
-	}
-
-	
-
-
-	
-
-
-
-
-
-
-	///public List<Object[]> queryEmployees () {
-	///	long id = this.getContactId();
-		///return Manager.queryTable("SELECT DISTINCT e.* FROM Employee_Contact ec, Employee e WHERE e.id = ec.employees_id AND ec.contacts_id = " + id);
-	///}
+    public String toString () {
+		String str = Manager.tableToString(queryBiblioteca()).replaceAll("\n", " | ");
+      	return this.getBibliotecaId() + ": " + this.getNom() + ", " + this.getCiutat() + ", Llibres: [" + str + "]";
+    }
 
 	
 }

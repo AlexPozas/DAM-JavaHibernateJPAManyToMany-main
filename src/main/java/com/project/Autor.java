@@ -8,22 +8,20 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(name = "Autor", 
+@Table(name = "Autor", uniqueConstraints = {@UniqueConstraint(columnNames = "autorId")})
+public class Autor {
+    
+    @Id
+    @Column(name = "autorId", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long autorId;
 
-	uniqueConstraints = {@UniqueConstraint(columnNames = "autorId")})
-public class Autor implements Serializable {
-
-	@Id
-	@Column(name = "autorId", unique = true, nullable = false)
-	@GeneratedValue(strategy=GenerationType.IDENTITY) // L'id es genera automàticament
-	private long autorId;
-
-	@Column(name = "nom")
-	private String nom;
-
+    @Column(name = "nom")
+    private String nom;
 
 	@OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
     private Set<Llibre> llibres;
+
 
 
 	public Autor(String nom) {
@@ -65,25 +63,10 @@ public class Autor implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Autor [autorId=" + autorId + ", nom=" + nom + ", llibres=" + llibres + "]";
+		return "Autor [autorId=" + this.getAutorId() + ", nom=" + this.getNom() + ", llibres=" + this.getLlibres() + "]";
 	}
 
-	 // Ha de tenir getter i setter perquè s'encarrega de la taula relacional N:N
-
-	
-
-
-	
-
-
-
-
-
-
-	///public List<Object[]> queryEmployees () {
-	///	long id = this.getContactId();
-		///return Manager.queryTable("SELECT DISTINCT e.* FROM Employee_Contact ec, Employee e WHERE e.id = ec.employees_id AND ec.contacts_id = " + id);
-	///}
+	 
 
 	
 }

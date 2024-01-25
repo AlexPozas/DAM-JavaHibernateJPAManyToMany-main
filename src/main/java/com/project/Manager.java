@@ -232,6 +232,9 @@ public class Manager {
 
     public static <T> String collectionToString(Class<? extends T> clazz, Collection<?> collection){
         String txt = "";
+        if (collection == null) {
+            return "Collection is null";
+        }
         for(Object obj: collection) {
             T cObj = clazz.cast(obj);
             txt += "\n" + cObj.toString();

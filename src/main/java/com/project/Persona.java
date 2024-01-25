@@ -8,34 +8,29 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(name = "Persona", 
+@Table(name = "Persona", uniqueConstraints = {@UniqueConstraint(columnNames = "personaId")})
+public class Persona {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "personaId", unique = true, nullable = false)
+    private long personaId;
 
-	uniqueConstraints = {@UniqueConstraint(columnNames = "personaId")})
-public class Persona implements Serializable {
+    @Column(name = "dni")
+    private String dni;
 
-	@Id
-	@Column(name = "personaId", unique = true, nullable = false)
-	@GeneratedValue(strategy=GenerationType.IDENTITY) // L'id es genera automàticament
-	private long personaId;
+    @Column(name = "nom")
+    private String nom;
 
-	@Column(name = "dni")
-	private String dni;
-
-	@Column(name = "nom")
-	private String nom;
-
-	@Column(name = "telefon")
-	private String telefon;
-
-
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-@JoinTable(
-    name = "Persona_Llibre", 
-    joinColumns = {@JoinColumn(referencedColumnName = "personaId")}, 
-    inverseJoinColumns = {@JoinColumn(referencedColumnName = "llibreId")}
-)
-private Set<Llibre> llibres2; // Ha de tenir getter i setter perquè s'encarrega de la taula relacional N:N
-
+    @Column(name = "telefon")
+    private String telefon;
+	@ManyToMany
+    @JoinTable(
+			name = "prestecs",
+            joinColumns = @JoinColumn(name = "persona_id"),
+            inverseJoinColumns = @JoinColumn(name = "llibre_id")
+    )
+    private Set<Llibre> llibres;
 
 
 
@@ -90,20 +85,26 @@ private Set<Llibre> llibres2; // Ha de tenir getter i setter perquè s'encarrega
 
 
 	public Set<Llibre> getLlibres() {
-		return llibres2;
+		return llibres;
 	}
 
 
 	public void setLlibres(Set<Llibre> llibres) {
-		this.llibres2 = llibres;
+		this.llibres = llibres;
 	}
 
+
+	
+	public List<Object[]> queryPersona () {
+		long id = this.getPersonaId();
+		return Manager.queryTable("SELECT DISTINCT e.* FROM prestecs ec, Llibre e WHERE e.id = ec.llibreid AND ec.personaId = " + id);
+	}
 
 	@Override
-	public String toString() {
-		return "Persona [personaId=" + personaId + ", dni=" + dni + ", nom=" + nom + ", telefon=" + telefon
-				+ ", llibres=" + llibres2 + "]";
-	}
+    public String toString () {
+		String str = Manager.tableToString(queryPersona()).replaceAll("\n", " | ");
+      	return this.getPersonaId() + ": " + this.getNom() + ", " + this.getDni() +", " + this.getTelefon() + ", Employees: [" + str + "]";
+    }
 
 	
 
@@ -115,10 +116,7 @@ private Set<Llibre> llibres2; // Ha de tenir getter i setter perquè s'encarrega
 
 
 
-	///public List<Object[]> queryEmployees () {
-	///	long id = this.getContactId();
-		///return Manager.queryTable("SELECT DISTINCT e.* FROM Employee_Contact ec, Employee e WHERE e.id = ec.employees_id AND ec.contacts_id = " + id);
-	///}
+	
 
 	
 }
