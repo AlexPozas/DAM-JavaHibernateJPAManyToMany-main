@@ -6,67 +6,63 @@ import java.util.Set;
 
 import javax.persistence.*;
 
-
 @Entity
-@Table(name = "Autor", uniqueConstraints = {@UniqueConstraint(columnNames = "autorId")})
-public class Autor {
+@Table(name = "Autor", 
+	uniqueConstraints = {@UniqueConstraint(columnNames = "id")})
+public class Autor implements Serializable{
     
     @Id
-    @Column(name = "autorId", unique = true, nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", unique = true, nullable = false)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
     private long autorId;
 
     @Column(name = "nom")
-    private String nom;
+	private String nom;
 
-	@OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
+    @OneToMany
+    @JoinColumn(name = "autorId") 
     private Set<Llibre> llibres;
 
+    Autor(){}
 
+    Autor(String nom){
+        this.nom = nom;
+    }
 
-	public Autor(String nom) {
-		
-		this.nom = nom;
-		
-	}
+    public long getAutorId() {
+        return autorId;
+    }
 
+    public void setAutorId(long autorId) {
+        this.autorId = autorId;
+    }
 
-	public long getAutorId() {
-		return autorId;
-	}
+    public String getNom() {
+        return nom;
+    }
 
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
 
-	public void setAutorId(long autorId) {
-		this.autorId = autorId;
-	}
+    public Set<Llibre> getLlibres() {
+        return llibres;
+    }
 
+    public void setLlibres(Set<Llibre> items) {
+        this.llibres = items;
+    }
 
-	public String getNom() {
-		return nom;
-	}
+    public List<Object[]> queryLlibres() {
+        long id = this.getAutorId();
+        return Manager.queryTable("SELECT DISTINCT l.* FROM Llibre l WHERE l.autorId = " + id);
+    }
 
+    @Override
+    public String toString() {
+        String str = Manager.tableToString(queryLlibres()).
+        replaceAll("\n", " | ");
 
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-
-
-	public Set<Llibre> getLlibres() {
-		return llibres;
-	}
-
-
-	public void setLlibres(Set<Llibre> llibres) {
-		this.llibres = llibres;
-	}
-
-
-	@Override
-	public String toString() {
-		return "Autor [autorId=" + this.getAutorId() + ", nom=" + this.getNom() + ", llibres=" + this.getLlibres() + "]";
-	}
-
-	 
-
-	
+        return this.getAutorId() + ": " + this.getNom() +  ", Llibres: [" + str + "]";
+    }
 }

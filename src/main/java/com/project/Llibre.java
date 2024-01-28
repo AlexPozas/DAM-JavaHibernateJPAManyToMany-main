@@ -1,117 +1,89 @@
 package com.project;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
 
-
-    
-   @Entity
-@Table(name = "Llibre",
-    uniqueConstraints = {@UniqueConstraint(columnNames = "llibreid")})
-public class Llibre {
-    
+@Entity
+@Table(name = "Llibre", 
+	uniqueConstraints = {@UniqueConstraint(columnNames = "id")})
+public class Llibre implements Serializable{
     @Id
-    @Column(name = "llibreid", unique = true, nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long llibreid;
+	@Column(name = "id", unique = true, nullable = false)
+	@GeneratedValue(strategy=GenerationType.IDENTITY) // L'id es genera automàticament
+	private long llibreId;
 
     @Column(name = "nom")
-    private String nom;
+	private String nom;
 
-    @Column(name = "editorial")
-    private String editorial;
+	@Column(name = "editorial")
+	private String editorial;
 
     @ManyToOne
-    @JoinColumn(name = "id_autor")
+    @JoinColumn(name = "autorId")
     private Autor autor;
 
-    @ManyToMany(mappedBy = "biblioteques", cascade = CascadeType.MERGE)
+    @ManyToMany(mappedBy = "llibres")
     private Set<Biblioteca> biblioteques;
 
-    @ManyToMany(mappedBy = "llibres", cascade = CascadeType.MERGE)
+    @ManyToMany(mappedBy = "llibres")
     private Set<Persona> persones;
 
-      public Llibre() {}
+    Llibre(){}
 
+    Llibre(String name, String editorial){
+        this.nom = name;
+        this.editorial = editorial;
+    }
 
-      public Llibre( String nom, String editoral) {
-        
-         this.nom = nom;
-         this.editorial = editoral;
-         
-      }
+    public long getLlibreId() {
+        return llibreId;
+    }
 
+    public void setLlibreId(long llibreId) {
+        this.llibreId = llibreId;
+    }
 
-      public long getLlibreId() {
-         return llibreid;
-      }
+    public String getNom() {
+        return nom;
+    }
 
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
 
-      public void setLlibreId(long llibreId) {
-         this.llibreid = llibreid;
-      }
+    public String getEditorial() {
+        return editorial;
+    }
 
+    public void setEditorial(String editorial) {
+        this.editorial = editorial;
+    }
 
-      public String getNom() {
-         return nom;
-      }
+    public Autor getAutorId() {
+        return autor;
+    }
 
+    public Set<Biblioteca> getBiblioteques() {
+        return biblioteques;
+    }
 
-      public void setNom(String nom) {
-         this.nom = nom;
-      }
+    public void setBiblioteques(Set<Biblioteca> biblioteques) {
+        this.biblioteques = biblioteques;
+    }
 
+    public Set<Persona> getPersones() {
+        return persones;
+    }
 
-      public String getEditoral() {
-         return editorial;
-      }
+    public void setPersones(Set<Persona> persones) {
+        this.persones = persones;
+    }
 
-
-      public void setEditoral(String editoral) {
-         this.editorial = editoral;
-      }
-
-
-      public Set<Biblioteca> getBiblioteques() {
-         return biblioteques;
-      }
-
-
-      public void setBiblioteques(Set<Biblioteca> biblioteca) {
-         this.biblioteques = biblioteca;
-      }
-
-
-      public Set<Persona> getPersones() {
-         return persones;
-      }
-
-
-      public void setPersones(Set<Persona> persones) {
-         this.persones = persones;
-      }
-
-
-      public Autor getAutor() {
-         return autor;
-      }
-
-
-      public void setAutor(Autor autor) {
-         this.autor = autor;
-      }
-
-
-      @Override
-      public String toString() {
-         return "Llibre [llibreid=" + this.getLlibreId() + ", nom=" + this.getNom() + ", editorial=" + this.getEditoral() + ", autor=" + this.getAutor()
-               + ", biblioteques=" + this.getBiblioteques() + ", persones=" + this.getPersones() + "]";
-      }
-
-
-  
-
-      
- }
+    @Override
+    public String toString() {
+        return this.getLlibreId() + ": " + this.getNom() + ", Editorial: " + this.getEditorial();
+    }
+}
